@@ -1,0 +1,251 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://entities/player/player.gd" type="Script" id=1]
+[ext_resource path="res://entities/player/rotationHelperPlayerCamera.gd" type="Script" id=2]
+[ext_resource path="res://entities/player/cameraMovement.gd" type="Script" id=3]
+[ext_resource path="res://images/gui/centerCrosshair.png" type="Texture" id=4]
+[ext_resource path="res://images/gui/crosshairDash.png" type="Texture" id=5]
+[ext_resource path="res://entities/player/notification.gd" type="Script" id=6]
+[ext_resource path="res://ui/fonts/notificationTitle.tres" type="DynamicFont" id=7]
+[ext_resource path="res://ui/fonts/notificationLabel.tres" type="DynamicFont" id=8]
+
+[sub_resource type="CapsuleShape" id=1]
+radius = 0.75
+height = 1.25
+
+[sub_resource type="BoxShape" id=2]
+extents = Vector3( 0.45, 0.03, 0.45 )
+
+[sub_resource type="CapsuleMesh" id=3]
+radius = 0.75
+mid_height = 1.25
+
+[sub_resource type="CapsuleMesh" id=4]
+radius = 0.12
+
+[node name="playerEntity" type="KinematicBody"]
+collision_layer = 4
+collision/safe_margin = 0.003
+script = ExtResource( 1 )
+
+[node name="bodyCollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+shape = SubResource( 1 )
+
+[node name="feetCollisionShape" type="CollisionShape" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.32829, 0 )
+shape = SubResource( 2 )
+
+[node name="jumpBuffer" type="Timer" parent="feetCollisionShape"]
+one_shot = true
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+mesh = SubResource( 3 )
+material/0 = null
+
+[node name="head" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.844679, 0 )
+script = ExtResource( 3 )
+
+[node name="worldCamera" type="Camera" parent="head"]
+cull_mask = 524287
+far = 150.0
+
+[node name="pivot" type="Spatial" parent="head"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 1.83804, 0.0207281, 0 )
+
+[node name="thirdPerson" type="ClippedCamera" parent="head/pivot"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5 )
+far = 153.0
+
+[node name="gui" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="crosshairs" type="Control" parent="gui"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -20.0
+margin_top = -20.0
+margin_right = 20.0
+margin_bottom = 20.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="centerCrosshair" type="TextureRect" parent="gui/crosshairs"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -7.0
+margin_top = -7.0
+margin_right = 7.0
+margin_bottom = 7.0
+rect_min_size = Vector2( 14, 14 )
+rect_pivot_offset = Vector2( 7, 7 )
+texture = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="leftCrosshairDash" type="TextureRect" parent="gui/crosshairs"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -11.0
+margin_top = -1.0
+margin_right = -7.0
+margin_bottom = 1.0
+rect_min_size = Vector2( 4, 2 )
+rect_pivot_offset = Vector2( 2, 1 )
+texture = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="rightCrosshairDash" type="TextureRect" parent="gui/crosshairs"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = 7.0
+margin_top = -1.0
+margin_right = 11.0
+margin_bottom = 1.0
+rect_min_size = Vector2( 4, 2 )
+rect_pivot_offset = Vector2( 2, 1 )
+texture = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="bottomCrosshairDash" type="TextureRect" parent="gui/crosshairs"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -2.0
+margin_top = 8.0
+margin_right = 2.0
+margin_bottom = 10.0
+rect_min_size = Vector2( 4, 2 )
+rect_rotation = -90.0
+rect_pivot_offset = Vector2( 2, 1 )
+texture = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="topCrosshairDash" type="TextureRect" parent="gui/crosshairs"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -2.0
+margin_top = -10.0
+margin_right = 2.0
+margin_bottom = -8.0
+rect_min_size = Vector2( 4, 2 )
+rect_rotation = 90.0
+rect_pivot_offset = Vector2( 2, 1 )
+texture = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="notification" type="Panel" parent="gui"]
+anchor_left = 1.0
+anchor_right = 1.0
+margin_left = -211.835
+margin_top = 11.672
+margin_right = -11.835
+margin_bottom = 61.672
+script = ExtResource( 6 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="gui/notification"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="notificationTitle" type="Label" parent="gui/notification/VBoxContainer"]
+margin_right = 200.0
+margin_bottom = 27.0
+size_flags_vertical = 3
+custom_fonts/font = ExtResource( 7 )
+align = 1
+valign = 2
+uppercase = true
+
+[node name="notificationLabel" type="Label" parent="gui/notification/VBoxContainer"]
+margin_top = 31.0
+margin_right = 200.0
+margin_bottom = 50.0
+size_flags_vertical = 3
+custom_fonts/font = ExtResource( 8 )
+align = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="notificationTween" type="Tween" parent="gui/notification"]
+
+[node name="viewportContainer" type="ViewportContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+stretch = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="playerViewport" type="Viewport" parent="viewportContainer"]
+size = Vector2( 1280, 720 )
+size_override_stretch = true
+transparent_bg = true
+handle_input_locally = false
+render_target_update_mode = 3
+
+[node name="rotationHelper" type="Spatial" parent="viewportContainer/playerViewport"]
+script = ExtResource( 2 )
+
+[node name="playerCamera" type="Camera" parent="viewportContainer/playerViewport/rotationHelper"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.844679, 0 )
+cull_mask = 524288
+far = 5.0
+
+[node name="Arm" type="Spatial" parent="viewportContainer/playerViewport/rotationHelper/playerCamera"]
+transform = Transform( 0.954146, 0, 0.299341, 0, 1, 0, -0.299341, 0, 0.954146, 0.495095, -0.461811, -0.553912 )
+
+[node name="flashlight" type="SpotLight" parent="viewportContainer/playerViewport/rotationHelper/playerCamera/Arm"]
+transform = Transform( 0.954146, 0, -0.299341, 0, 1, 0, 0.299341, 0, 0.954146, -0.0477571, 0.00443399, -0.268947 )
+light_color = Color( 1, 0.94902, 0.666667, 1 )
+light_cull_mask = 4294443007
+shadow_enabled = true
+spot_range = 30.0
+spot_attenuation = 1.7411
+spot_angle = 24.346
+
+[node name="MeshInstance" type="MeshInstance" parent="viewportContainer/playerViewport/rotationHelper/playerCamera/Arm"]
+layers = 524288
+mesh = SubResource( 4 )
+material/0 = null
+
+[connection signal="changeViewType" from="." to="head" method="_on_playerEntity_changeViewType"]
+[connection signal="moveViewport" from="." to="head" method="_on_playerEntity_moveViewport"]
+[connection signal="timeout" from="feetCollisionShape/jumpBuffer" to="." method="_on_jumpBuffer_timeout"]
+[connection signal="moveCamera" from="head" to="viewportContainer/playerViewport/rotationHelper" method="_on_head_moveCamera"]
+[connection signal="moveViewport" from="head" to="viewportContainer/playerViewport/rotationHelper" method="_on_head_moveViewport"]
+[connection signal="notification" from="head" to="gui/notification" method="_on_head_notification"]
